@@ -43,18 +43,39 @@ def main():
     if request.method =='POST':
         email = request.form.get("signin_email")
         password = request.form.get("signin_pass")
-        emails = db.execute("SELECT email , password FROM customers").fetchall()
+        emails = db.execute("SELECT email , password , firstname FROM customers").fetchall()
         for i in emails:
             if email == i[0]:
                 if i[1] ==password:
-                     return render_template("main.html",customer = i)
-        
+                    return render_template("main.html",customer = i)
         return render_template("error.html")
 
 @app.route("/main/<email>")
 #hiển thị trang cá nhân của khách hàng
 def user(email):
     booking = db.execute("SELECT * FROM bookings WHERE email = :email",{"email":email}).fetchone()
-    return render_template("user.html",booking)
-        
-        
+    return render_template("user.html",booking=booking)
+
+@app.route("/user/<email>",methods=['GET'])
+def cancel(email):
+    db.execute("DELETE FROM bookings WHERE email = :email",{"email":email})
+    db.commit()  
+    booking = db.execute("SELECT * FROM bookings WHERE email = :email",{"email":email}).fetchone() 
+    return render_template("user.html",booking = booking)
+
+@app.route("/booking",methods=['POST'])
+def booking():
+    if request.method=='POST':
+        check_in = request.form.get("inputCheckIn")
+        check_out = request.form.get("inputCheckOut")
+        adult = request.form.get("adult")  
+        children = request.form.get("children")
+        capacity = int(adult + children)
+        bed = request.form.get("bed")
+        room_list = db.execute("SELECT * FROM rooms").fetchall()
+        rooms = []
+        for room in room_list:
+            if room[1] > capacity:
+                rooms.append(room)
+        return render_template("booking.html", rooms=rooms)
+
