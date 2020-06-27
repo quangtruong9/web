@@ -47,12 +47,14 @@ def main():
         for i in emails:
             if email == i[0]:
                 if i[1] ==password:
-                    return render_template("main.html")
+                     return render_template("main.html",customer = i)
         
         return render_template("error.html")
 
-@app.route("/user")
+@app.route("/main/<email>")
 #hiển thị trang cá nhân của khách hàng
-def user():
-    return render_template("user.html")
+def user(email):
+    booking = db.execute("SELECT * FROM bookings WHERE email = :email",{"email":email}).fetchone()
+    return render_template("user.html",booking)
+        
         
