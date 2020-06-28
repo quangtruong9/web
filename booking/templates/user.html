@@ -69,44 +69,32 @@ http://www.tooplate.com/view/2095-level
         </div>
     </div>
     <div class="tm-section tm-bg-img" id="tm-section-1">
-        <div class="tm-bg-white ie-container-width-fix-2">
-            <div class="container ie-h-align-center-fix">
-                <div class="row">
-                    <div class="col"> 
-                        <h2>
-                            Room ID: {{booking.room_id}}
-                        </h2>
-                    </div>
-                    <div class="col"> 
-                        <h2>
-                             Booking ID: {{booking.booking_id}}
-                        </h2>
-                    </div>
-                    <div class="col"> 
-                        <h2>
-                            Status 
-                        </h2>
-                    </div>                              
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <h2>
-                            Check-in: {{booking.check_in}}
-                        </h2>
-                    </div>
-                    <div class="col">
-                        <h2>
-                            Check-out: {{booking.check_out}}
-                        </h2>
-                    </div>
-                </div>
-                
+        
+            
+                <table class="table table-dark ">
+                    <thead>
+                      <tr>
+                        <th scope="col">Booking ID</th>
+                        <th scope="col">Room</th>
+                        <th scope="col">Check In</th>
+                        <th scope="col">Check Out</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>{{booking.booking_id}}</td>
+                        <td>{{booking.room_id}}</td>
+                        <td>{{booking.check_in}}</td>
+                        <td>{{booking.check_out}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 <form action="{{url_for('cancel',email=booking.email)}}" method="post">
                     <button type="submit" class="btn btn-primary">Cancel</button>
                 </form>
                 
                 <button type="submit" class="btn btn-primary">Pay</button>    
-            </div>
+            
         </div>                  
     </div>   
 </body>
