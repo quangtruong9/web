@@ -1,8 +1,8 @@
 import os
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-
+from datetime import datetime
 app = Flask(__name__)
 #trc khi chạy, tạo trong postgres database của khách hàng 
 # CREATE TABLE customers (
@@ -49,33 +49,42 @@ def main():
                 if i[1] ==password:
                     return render_template("main.html",customer = i)
         return render_template("error.html")
-
-@app.route("/main/<email>")
+    
+@app.route("/user/<email>")
 #hiển thị trang cá nhân của khách hàng
 def user(email):
     booking = db.execute("SELECT * FROM bookings WHERE email = :email",{"email":email}).fetchone()
     return render_template("user.html",booking=booking)
 
-@app.route("/user/<email>",methods=['GET'])
+@app.route("/user/<email>",methods=['POST'])
 def cancel(email):
-    db.execute("DELETE FROM bookings WHERE email = :email",{"email":email})
-    db.commit()  
-    booking = db.execute("SELECT * FROM bookings WHERE email = :email",{"email":email}).fetchone() 
-    return render_template("user.html",booking = booking)
+    if request.method =='POST':
+        db.execute("DELETE FROM bookings WHERE email = :email",{"email":email})
+        db.commit()  
+        return redirect(url_for('user',email=email))
+    
 
-@app.route("/booking",methods=['POST'])
-def booking():
+@app.route("/booking/<email>",methods=['POST'])
+def booking(email):
     if request.method=='POST':
         check_in = request.form.get("inputCheckIn")
         check_out = request.form.get("inputCheckOut")
         adult = request.form.get("adult")  
         children = request.form.get("children")
-        capacity = int(adult + children)
+        capacity = int(adult) + int(children)
         bed = request.form.get("bed")
         room_list = db.execute("SELECT * FROM rooms").fetchall()
         rooms = []
         for room in room_list:
             if room[1] > capacity:
                 rooms.append(room)
-        return render_template("booking.html", rooms=rooms)
+        customer = db.execute("SELECT * FROM customers WHERE email = :email",{"email":email}).fetchone()
+        return render_template("booking.html",customer = customer,check_in = check_in,check_out=check_out,rooms=rooms)
+
+@app.route("/booking/<email>/<room_id>/<check_in>/<check_out>")
+def bookings(email,room_id,check_in,check_out):
+    db.execute("INSERT INTO bookings (room_id,email,check_in,check_out) VALUES (:room_id,:email,:check_in,:check_out)",
+                {"room_id":room_id,"email":email,"check_in":check_in,"check_out":check_out})
+    db.commit()
+    return render_template("bookings.html",email=email,room_id=room_id)
 
