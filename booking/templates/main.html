@@ -83,19 +83,19 @@ http://www.tooplate.com/view/2095-level
                     <div class="container ie-h-align-center-fix">
                         <div class="row">
                             <div class="col-xs-12 ml-auto mr-auto ie-container-width-fix">
-                                <form action="{{url_for('booking')}}" method="post" class="tm-search-form tm-section-pad-2">
+                                <form action="{{url_for('booking',email=customer.email)}}" method="post" class="tm-search-form tm-section-pad-2">
                                     <div class="form-row tm-search-form-row">
                                         <div class="form-group tm-form-element tm-form-element-100">
                                             <i class="fa fa-map-marker fa-2x tm-form-element-icon"></i>
                                             <input name="city" type="text" class="form-control" id="inputCity" placeholder="Type your destination...">
                                         </div>
                                         <div class="form-group tm-form-element tm-form-element-50">
-                                            <i class="fa fa-calendar fa-2x tm-form-element-icon"></i>
-                                            <input name="check-in" type="text" class="form-control" id="inputCheckIn" placeholder="Check In">
+                                            <label for="birthday">Check In:</label>
+                                            <input type="date" id="inputCheckIn" name="inputCheckIn">
                                         </div>
                                         <div class="form-group tm-form-element tm-form-element-50">
-                                            <i class="fa fa-calendar fa-2x tm-form-element-icon"></i>
-                                            <input name="check-out" type="text" class="form-control" id="inputCheckOut" placeholder="Check Out">
+                                            <label for="birthday">Check Out:</label>
+                                            <input type="date" id="inputCheckOut" name="inputCheckOut">
                                         </div>
                                     </div>
                                     <div class="form-row tm-search-form-row">

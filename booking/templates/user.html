@@ -79,7 +79,7 @@ http://www.tooplate.com/view/2095-level
                     </div>
                     <div class="col"> 
                         <h2>
-                             Booking ID {{booking.booking_id}}
+                             Booking ID: {{booking.booking_id}}
                         </h2>
                     </div>
                     <div class="col"> 
@@ -91,16 +91,17 @@ http://www.tooplate.com/view/2095-level
                 <div class="row">
                     <div class="col">
                         <h2>
-                            Check-in {{booking.check_in}}
+                            Check-in: {{booking.check_in}}
                         </h2>
                     </div>
                     <div class="col">
                         <h2>
-                            Check-out {{booking.check_out}}
+                            Check-out: {{booking.check_out}}
                         </h2>
                     </div>
                 </div>
-                <form action="{{url_for('cancel',email=booking.email)}} method="get">
+                
+                <form action="{{url_for('cancel',email=booking.email)}}" method="post">
                     <button type="submit" class="btn btn-primary">Cancel</button>
                 </form>
                 

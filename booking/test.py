@@ -10,14 +10,7 @@ db = scoped_session(sessionmaker(bind=engine))
 
 email = "truong@gmail.com"
     
-count = db.execute("SELECT email, password FROM customers").fetchall()
+count = db.execute("DELETE FROM bookings WHERE email = :email",{"email":email})
 
+db.commit()
 
-print(count)
-
-for i in count:
-    if (email==i[0]):
-        print("yes")
-        break
-    else:
-        continue
