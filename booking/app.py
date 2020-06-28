@@ -49,7 +49,12 @@ def main():
                 if i[1] ==password:
                     return render_template("main.html",customer = i)
         return render_template("error.html")
-    
+
+@app.route("/main/<email>")
+def home(email):
+    customer = db.execute("SELECT * FROM customers WHERE email=:email",{"email":email}).fetchone()
+    return render_template("main.html",customer=customer)
+
 @app.route("/user/<email>")
 #hiển thị trang cá nhân của khách hàng
 def user(email):
