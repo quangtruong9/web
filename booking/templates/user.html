@@ -79,19 +79,24 @@ http://www.tooplate.com/view/2095-level
                       </tr>
                     </thead>
                     <tbody>
+                      {%for book in booking%}
                       <tr>
-                        <td>{{booking.booking_id}}</td>
-                        <td>{{booking.room_id}}</td>
-                        <td>{{booking.check_in}}</td>
-                        <td>{{booking.check_out}}</td>
+                        <td>{{book.booking_id}}</td>
+                        <td>{{book.room_id}}</td>
+                        <td>{{book.check_in}}</td>
+                        <td>{{book.check_out}}</td>
+                        <td>
+                          <form action="{{url_for('cancel',email=book.email)}}" method="post">
+                            <button type="submit" class="btn btn-primary">Cancel</button>
+                          </form>
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-primary">Pay</button>
+                        </td>
                       </tr>
+                      {% endfor %}
                     </tbody>
                   </table>
-                <form action="{{url_for('cancel',email=booking.email)}}" method="post">
-                    <button type="submit" class="btn btn-primary">Cancel</button>
-                </form>
-                
-                <button type="submit" class="btn btn-primary">Pay</button>    
             
         </div>                  
     </div>   

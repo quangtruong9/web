@@ -58,7 +58,10 @@ def home(email):
 @app.route("/user/<email>")
 #hiển thị trang cá nhân của khách hàng
 def user(email):
-    booking = db.execute("SELECT * FROM bookings WHERE email = :email",{"email":email}).fetchone()
+    if (email == "admin@admin"):
+        booking = db.execute("SELECT * FROM bookings").fetchall()
+    else:
+        booking = db.execute("SELECT * FROM bookings WHERE email = :email",{"email":email}).fetchall()
     return render_template("user.html",booking=booking)
 
 @app.route("/user/<email>",methods=['POST'])

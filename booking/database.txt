@@ -17,3 +17,7 @@ check_in DATE NOT NULL,
 check_out DATE NOT NULL,
 status VARCHAR);
 
+#add admin into customers
+INSERT INTO customers VALUES ('admin@admin','123456','admin','admin',0123456789);
+
+
