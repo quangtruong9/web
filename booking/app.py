@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from datetime import datetime
@@ -43,12 +43,13 @@ def main():
     if request.method =='POST':
         email = request.form.get("signin_email")
         password = request.form.get("signin_pass")
-        emails = db.execute("SELECT email , password , firstname FROM customers").fetchall()
-        for i in emails:
-            if email == i[0]:
-                if i[1] ==password:
-                    return render_template("main.html",customer = i)
-        return render_template("error.html")
+        emails = db.execute("SELECT email , password , firstname FROM customers WHERE email= :email AND password = :password",
+            {"email":email,"password":password}).fetchone()
+        if emails == None:
+            return jsonify({"success":False})
+        else:
+            jsonify({"success":True})
+            return render_template("main.html",customer = emails)
 
 @app.route("/main/<email>")
 def home(email):
@@ -62,14 +63,19 @@ def user(email):
         booking = db.execute("SELECT * FROM bookings").fetchall()
     else:
         booking = db.execute("SELECT * FROM bookings WHERE email = :email",{"email":email}).fetchall()
-    return render_template("user.html",booking=booking)
+    return render_template("user.html",email=email,booking=booking)
 
-@app.route("/user/<email>",methods=['POST'])
-def cancel(email):
+@app.route("/user/<email>/<book_id>",methods=['POST'])
+def cancel(email,book_id):
     if request.method =='POST':
-        db.execute("DELETE FROM bookings WHERE email = :email",{"email":email})
-        db.commit()  
-        return redirect(url_for('user',email=email))
+        db.execute("DELETE FROM bookings WHERE booking_id = :book_id",{"book_id":book_id})
+        db.commit()
+        if (email == "admin@admin"):
+            booking = db.execute("SELECT * FROM bookings").fetchall()
+        else:
+            booking = db.execute("SELECT * FROM bookings WHERE email = :email",{"email":email}).fetchall()
+
+        return render_template("user.html",email=email,booking=booking)
     
 
 @app.route("/booking/<email>",methods=['POST'])
