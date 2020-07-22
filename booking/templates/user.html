@@ -86,12 +86,12 @@ http://www.tooplate.com/view/2095-level
                         <td>{{book.check_in}}</td>
                         <td>{{book.check_out}}</td>
                         <td>
-                          <form action="{{url_for('cancel',email=email,book_id=book.booking_id)}}" method="post">
+                          <form action="{{url_for('cancel',email=email,book_id=book.booking_id)}}" onclick="return confirm('Are you sure you want to cancel?');" method="post">
                             <button type="submit" class="btn btn-primary">Cancel</button>
                           </form>
                         </td>
                         <td>
-                            <button type="submit" class="btn btn-primary">Pay</button>
+                            <button type="submit"  class="btn btn-primary">Pay</button>
                         </td>
                       </tr>
                       {% endfor %}
