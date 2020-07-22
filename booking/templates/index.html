@@ -14,7 +14,31 @@ http://www.tooplate.com/view/2095-level
 
 -->
     <!-- load stylesheets -->
-      
+    <script>
+        function verify(){
+            const request = new XMLHttpRequest();
+            const email = document.querySelector('#exampleDropdownFormEmail1').value;
+            const password = document.querySelector('#exampleDropdownFormPassword1').value;
+            request.open('POST','/login');
+            request.onload = () => {
+                const data = JSON.parse(request.responseText);
+                if (data.success===false){
+                    alert("Wrong Emai or Password. Try again!");
+                    return false;
+                }
+                else{
+                    return true;
+                }
+
+            };
+            const data = new FormData();
+            data.append('email',email);
+            data.append('password',password);
+
+            request.send(data);
+            
+        }
+    </script>  
     <link rel="stylesheet" href="{{url_for('static',filename='font-awesome-4.7.0/css/font-awesome.min.css')}}">                <!-- Font Awesome -->
     <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}">                                      <!-- Bootstrap style -->
     <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='slick/slick.css')}}"/>
@@ -65,7 +89,7 @@ http://www.tooplate.com/view/2095-level
                                           Log In
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-lg-left">
-                                            <form action="{{ url_for('main')}}" method="post" class="px-4 py-3">
+                                            <form action="{{url_for('main')}}" method="post" onsubmit="return verify()" class="px-4 py-3">
                                               <div class="form-group">
                                                 <label for="exampleDropdownFormEmail1">Email address</label>
                                                 <input type="email" class="form-control" id="exampleDropdownFormEmail1" name="signin_email" placeholder="email@example.com">
@@ -82,7 +106,7 @@ http://www.tooplate.com/view/2095-level
                                                   </label>
                                                 </div>
                                               </div>
-                                              <button type="submit" class="btn btn-primary">Sign in</button>
+                                              <button type="submit"  class="btn btn-primary">Sign in</button>
                                             </form>
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item" href="{{ url_for('register')}}">New around here? Sign up</a>

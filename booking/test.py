@@ -9,8 +9,8 @@ engine = create_engine("postgres://postgres:123456789@localhost:5432")
 db = scoped_session(sessionmaker(bind=engine))
 
 email = "truong@gmail.com"
-    
-count = db.execute("DELETE FROM bookings WHERE email = :email",{"email":email})
+password = "21"
+count = db.execute("SELECT email , password , firstname FROM customers WHERE email= :email AND password = :password",
+            {"email":email,"password":password}).fetchone()
 
-db.commit()
-
+print(count)

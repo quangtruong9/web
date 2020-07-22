@@ -45,11 +45,22 @@ def main():
         password = request.form.get("signin_pass")
         emails = db.execute("SELECT email , password , firstname FROM customers WHERE email= :email AND password = :password",
             {"email":email,"password":password}).fetchone()
-        if emails == None:
-            return jsonify({"success":False})
-        else:
-            jsonify({"success":True})
+        if emails != None:
             return render_template("main.html",customer = emails)
+        else:
+            return render_template("index.html")
+
+@app.route("/login",methods=["POST"])
+def login():
+    email = request.form.get("email")
+    password = request.form.get("password")
+    emails = db.execute("SELECT email , password FROM customers WHERE email= :email AND password = :password",
+            {"email":email,"password":password}).fetchone()
+    if emails != None:
+        return jsonify({"success":True})
+    else:
+        return jsonify({"success":False})
+
 
 @app.route("/main/<email>")
 def home(email):
