@@ -13,7 +13,8 @@ app = Flask(__name__)
 # phone_number INTERGER NOT NULL );
 
 #mỗi máy dòng trong ngoặc sẽ khác nhau,thay 123456789 thành  password của postgres của mấy ô 
-engine = create_engine("postgres://postgres:123456789@localhost:5432") 
+
+engine = create_engine("postgres://tncdzhysojhnjn:e07995eb170d7115f2b7c503afa00117cb3319b7980df6654f0583751aebd960@ec2-3-216-129-140.compute-1.amazonaws.com:5432/dcc0kbu8eseuk2")
 db = scoped_session(sessionmaker(bind=engine))
 
 
