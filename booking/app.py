@@ -69,8 +69,6 @@ def home(email):
     customer = db.execute("SELECT * FROM customers WHERE email=:email",{"email":email}).fetchone()
     return render_template("main.html",customer=customer)
 
-
-
 @app.route("/myinfo/<email>", methods=['POST','GET'])
 def myinfo(email):
     if request.method == 'POST':
@@ -127,13 +125,31 @@ def booking(email):
         check_out = request.form.get("inputCheckOut")
         adult = request.form.get("adult")  
         children = request.form.get("children")
-        capacity = int(adult) + int(children)
         bed = request.form.get("bed")
         room_list = db.execute("SELECT * FROM rooms").fetchall()
         rooms = []
+        check_in = datetime.datetime.strptime(check_in,'%Y-%m-%d').date()
+        check_out = datetime.datetime.strptime(check_out,'%Y-%m-%d').date()
         for room in room_list:
-            if room[1] > capacity:
-                rooms.append(room)
+            if room.bed == int(bed):
+                book_rooms = db.execute("SELECT * FROM bookings WHERE room_id = :roomid ",{"roomid":room.id}).fetchall()
+                cur_rooms = db.execute("SELECT * FROM checkin_success WHERE room_id = :roomid ",{"roomid":room.id}).fetchall()
+                bool_book = True
+                bool_cur = True
+                for book_room in book_rooms:
+                    if (book_room.check_in > check_out or book_room.check_out < check_in):
+                        continue
+                    else:
+                        bool_book = False
+                        break
+                for book_room in cur_rooms:
+                    if (book_room.check_in > check_out or book_room.check_out < check_in):
+                        continue
+                    else:
+                        bool_cur = False
+                        break
+                if (bool_book == True and bool_cur == True):       
+                    rooms.append(room)
         customer = db.execute("SELECT * FROM customers WHERE email = :email",{"email":email}).fetchone()
         return render_template("booking.html",customer = customer,check_in = check_in,check_out=check_out,rooms=rooms)
 
