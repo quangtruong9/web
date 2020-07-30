@@ -8,9 +8,6 @@
     <title>Hotel Reservation</title>
 <!--
 
-Template 2095 Level
-
-http://www.tooplate.com/view/2095-level
 
 -->
     <!-- load stylesheets -->
@@ -58,8 +55,17 @@ http://www.tooplate.com/view/2095-level
                               <li class="nav-item">
                                 <a class="nav-link" href="#tm-section-6">Contact Us</a>
                               </li>
-                              <li class ="nav-item">
-                                    <a class="nav-link" href="#"> User </a>
+                              <li class ="btn-group">
+                                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    User 
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-lg-left">
+                                    <a href="{{ url_for('user', email=email)}}" >My Reservation </a>
+                                    <br>
+                                    <a href="{{url_for('myinfo',email=email)}}"> My Information</a>
+                                    <br>
+                                    <a href="{{url_for('index')}}"> Sign Out</a>
+                                </div>
                               </li>
                             </ul>
                         </div>       
@@ -93,12 +99,18 @@ http://www.tooplate.com/view/2095-level
                         <td>
                             <button type="submit"  class="btn btn-primary">Pay</button>
                         </td>
+                        
                       </tr>
                       {% endfor %}
                     </tbody>
                   </table>
             
         </div>                  
-    </div>   
+        <script src="{{url_for('static',filename='js/jquery-1.11.3.min.js')}}"></script>             <!-- jQuery (https://jquery.com/download/) -->
+        <script src="{{url_for('static',filename='js/popper.min.js')}}"></script>                    <!-- https://popper.js.org/ -->       
+        <script src="{{url_for('static',filename='js/bootstrap.min.js')}}"></script>                 <!-- https://getbootstrap.com/ -->
+        <script src="{{url_for('static',filename='js/datepicker.min.js')}}"></script>                <!-- https://github.com/qodesmith/datepicker -->
+        <script src="{{url_for('static',filename='js/jquery.singlePageNav.min.js')}}"></script>      <!-- Single Page Nav (https://github.com/ChrisWojcik/single-page-nav) -->
+        <script src="{{url_for('static',filename='slick/slick.min.js')}}"></script>
 </body>
 </html>

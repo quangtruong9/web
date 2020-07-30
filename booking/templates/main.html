@@ -8,13 +8,19 @@
     <title>Hotel Reservation</title>
 <!--
 
-Template 2095 Level
 
-http://www.tooplate.com/view/2095-level
 
 -->
     <!-- load stylesheets -->
-      
+    <script>
+        function check(){
+            const check_in_date = document.querySelector('#inputCheckIn').value;
+            const check_out_date = document.querySelector('#inputCheckOut').value;
+            var this_day = Date.now() ;
+            alert(check_in_date);
+            
+        }
+    </script>
     <link rel="stylesheet" href="{{url_for('static',filename='font-awesome-4.7.0/css/font-awesome.min.css')}}">                <!-- Font Awesome -->
     <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}">                                      <!-- Bootstrap style -->
     <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='slick/slick.css')}}"/>
@@ -61,10 +67,17 @@ http://www.tooplate.com/view/2095-level
                                   </li>
                                   <li class ="btn-group">
                                         <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            User {{customer.firstname}}
+                                            User {{customer.firstname.capitalize()}}
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-lg-left">
-                                            <a href="{{ url_for('user', email=customer.email)}}" > View Information </a>
+                                            {%if customer.email == 'admin@admin'%}
+                                                <a href="{{ url_for('manage')}}" >Manange Hotel </a>
+                                                <br>
+                                            {%else%}
+                                                <a href="{{ url_for('user', email=customer.email)}}" >My Reservation </a>
+                                                <br>
+                                            {%endif%}
+                                            <a href="{{url_for('myinfo',email=customer.email)}}"> My Information</a>
                                             <br>
                                             <a href="{{url_for('index')}}"> Sign Out</a>
                                         </div>
@@ -83,7 +96,7 @@ http://www.tooplate.com/view/2095-level
                     <div class="container ie-h-align-center-fix">
                         <div class="row">
                             <div class="col-xs-12 ml-auto mr-auto ie-container-width-fix">
-                                <form action="{{url_for('booking',email=customer.email)}}" method="post" class="tm-search-form tm-section-pad-2">
+                                <form action="{{url_for('booking',email=customer.email)}}" method="post" onsubmit="return check()" class="tm-search-form tm-section-pad-2">
                                     <div class="form-row tm-search-form-row">
                                         <div class="form-group tm-form-element tm-form-element-100">
                                             <i class="fa fa-map-marker fa-2x tm-form-element-icon"></i>

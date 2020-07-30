@@ -1,8 +1,9 @@
 import os
+import datetime
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-from datetime import datetime
+
 app = Flask(__name__)
 #trc khi chạy, tạo trong postgres database của khách hàng 
 # CREATE TABLE customers (
@@ -68,8 +69,35 @@ def home(email):
     customer = db.execute("SELECT * FROM customers WHERE email=:email",{"email":email}).fetchone()
     return render_template("main.html",customer=customer)
 
+
+
+@app.route("/myinfo/<email>", methods=['POST','GET'])
+def myinfo(email):
+    if request.method == 'POST':
+        new_email = request.form.get("email")
+        firstname = request.form.get("fname")
+        lastname = request.form.get("lname")
+        phone_number = request.form.get("pnumber")
+        if firstname != '':
+            db.execute("UPDATE customers SET firstname = :firstname WHERE email = :email",{"firstname":firstname,"email":email})
+        if lastname != '':
+            db.execute("UPDATE customers SET lastname = :lastname WHERE email = :email",{"lastname":lastname,"email":email})
+        if phone_number != '':
+            db.execute("UPDATE customers SET phone_number = :phone_number WHERE email = :email",{"phone_number":phone_number,"email":email})
+        if new_email != '':
+            db.execute("UPDATE customers SET email = :new_email WHERE email = :email",{"new_email":new_email,"email":email})
+            email = new_email
+        db.commit()
+    customer = db.execute("SELECT * FROM customers WHERE email = :email",{"email":email}).fetchone()
+    return render_template("myinfo.html",customer = customer)
+
+@app.route("/update/<email>",methods=['POST'])
+def update(email):
+    customer = db.execute("SELECT * FROM customers WHERE email = :email",{"email":email}).fetchone()
+    return render_template("update.html",customer = customer)
+
+#hiển thị trang cá nhân của khách hàng   
 @app.route("/user/<email>")
-#hiển thị trang cá nhân của khách hàng
 def user(email):
     if (email == "admin@admin"):
         booking = db.execute("SELECT * FROM bookings").fetchall()
@@ -88,7 +116,9 @@ def cancel(email,book_id):
             booking = db.execute("SELECT * FROM bookings WHERE email = :email",{"email":email}).fetchall()
 
         return render_template("user.html",email=email,booking=booking)
-    
+        
+
+
 
 @app.route("/booking/<email>",methods=['POST'])
 def booking(email):
@@ -114,3 +144,66 @@ def bookings(email,room_id,check_in,check_out):
     db.commit()
     return render_template("bookings.html",email=email,room_id=room_id)
 
+@app.route("/manage")
+def manage():
+    now = datetime.datetime.now()
+    today = now.date()
+    late = db.execute("SELECT * FROM bookings WHERE check_in < :today",{"today":today}).fetchall()
+    thisday = db.execute("SELECT * FROM bookings WHERE check_in = :today",{"today":today}).fetchall()
+    coming = db.execute("SELECT * FROM bookings WHERE check_in > :today",{"today":today}).fetchall()
+    current = db.execute("SELECT * FROM checkin_success").fetchall()
+    return render_template("manage.html",lates = late,thisday= thisday,coming = coming, current = current)
+
+@app.route("/manage/cancel/<book_id>")
+def admin_cancel(book_id):
+    db.execute("DELETE FROM bookings WHERE booking_id = :book_id",{"book_id":book_id})
+    db.commit()
+    now = datetime.datetime.now()
+    today = now.date()
+    late = db.execute("SELECT * FROM bookings WHERE check_in < :today",{"today":today}).fetchall()
+    thisday = db.execute("SELECT * FROM bookings WHERE check_in = :today",{"today":today}).fetchall()
+    coming = db.execute("SELECT * FROM bookings WHERE check_in > :today",{"today":today}).fetchall()
+    current = db.execute("SELECT * FROM checkin_success").fetchall()
+    return render_template("manage.html",lates = late,thisday= thisday,coming = coming, current = current)
+
+@app.route("/manage/checkin/<book_id>",methods=['POST'])
+def checkin(book_id):
+    if request.method == 'POST':
+        db.execute("INSERT INTO checkin_success SELECT * FROM bookings WHERE booking_id = :book_id",{"book_id":book_id})
+        db.execute("DELETE FROM bookings WHERE booking_id = :book_id",{"book_id":book_id})
+        db.commit()
+        now = datetime.datetime.now()
+        today = now.date()
+        late = db.execute("SELECT * FROM bookings WHERE check_in < :today",{"today":today}).fetchall()
+        thisday = db.execute("SELECT * FROM bookings WHERE check_in = :today",{"today":today}).fetchall()
+        coming = db.execute("SELECT * FROM bookings WHERE check_in > :today",{"today":today}).fetchall()
+        current = db.execute("SELECT * FROM checkin_success").fetchall()
+        return render_template("manage.html",lates = late,thisday= thisday,coming = coming, current = current)
+
+
+@app.route("/manage/checkout/<book_id>",methods=['POST'])
+def checkout(book_id):
+    if request.method == 'POST':
+        now = datetime.datetime.now()
+        check_out = now.date()
+        check_in = db.execute("SELECT check_in FROM checkin_success WHERE booking_id = :book_id",{"book_id":book_id}).fetchone()
+        cus_email = db.execute("SELECT email FROM checkin_success WHERE booking_id = :book_id",{"book_id":book_id}).fetchone()
+        room_id = db.execute("SELECT room_id FROM checkin_success WHERE booking_id = :book_id",{"book_id":book_id}).fetchone()
+        price = db.execute("SELECT price FROM rooms WHERE id = :room_id ",{"room_id":room_id[0]}).fetchone()
+        date = check_out - check_in[0]
+        if date.days == 0:
+            total_date = 1
+        else:
+            total_date = date.days
+        cost = int(price[0]) * total_date
+        db.execute("INSERT INTO checkout_success (booking_id,room_id,email,check_in,check_out,price) VALUES (:booking_id,:room_id,:email,:check_in,:check_out,:price)",
+            {"booking_id":book_id,"room_id":room_id[0],"email":cus_email[0],"check_in":check_in[0],"check_out":check_out,"price":cost})
+        db.execute("DELETE FROM checkin_success WHERE booking_id = :book_id",{"book_id":book_id})
+        db.commit()
+        now = datetime.datetime.now()
+        today = now.date()
+        late = db.execute("SELECT * FROM bookings WHERE check_in < :today",{"today":today}).fetchall()
+        thisday = db.execute("SELECT * FROM bookings WHERE check_in = :today",{"today":today}).fetchall()
+        coming = db.execute("SELECT * FROM bookings WHERE check_in > :today",{"today":today}).fetchall()
+        current = db.execute("SELECT * FROM checkin_success").fetchall()
+        return render_template("manage.html",lates = late,thisday= thisday,coming = coming, current = current)
