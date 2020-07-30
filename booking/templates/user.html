@@ -78,6 +78,7 @@
                 <table class="table table-dark ">
                     <thead>
                       <tr>
+                        <th scope="col">Coming</th>
                         <th scope="col">Booking ID</th>
                         <th scope="col">Room</th>
                         <th scope="col">Check In</th>
@@ -87,6 +88,7 @@
                     <tbody>
                       {%for book in booking%}
                       <tr>
+                        <td></td>
                         <td>{{book.booking_id}}</td>
                         <td>{{book.room_id}}</td>
                         <td>{{book.check_in}}</td>
@@ -99,7 +101,6 @@
                         <td>
                             <button type="submit"  class="btn btn-primary">Pay</button>
                         </td>
-                        
                       </tr>
                       {% endfor %}
                     </tbody>

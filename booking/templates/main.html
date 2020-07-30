@@ -16,9 +16,48 @@
         function check(){
             const check_in_date = document.querySelector('#inputCheckIn').value;
             const check_out_date = document.querySelector('#inputCheckOut').value;
-            var this_day = Date.now() ;
-            alert(check_in_date);
-            
+            const adult = document.querySelector('#adult').value; 
+            const child = document.querySelector('#children').value;
+            const bed = document.querySelector('#bed').value;
+            if (check_out_date < check_in_date){
+                alert("Check out date has to at least one day after check in day!");
+                return false;
+            }
+            if (check_in_date==''){
+                alert("Please pick check in date!");
+                return false;
+            }
+            if (check_out_date==''){
+                alert("Please pick check in date!");
+                return false;
+            }
+            if (adult==''){
+                alert("Please pick the number of people!");
+                return false;
+            }
+            if (child==''){
+                alert("Please pick the number of people!");
+                return false;
+            }
+            if (bed==''){
+                alert("Please pick the number of bed!");
+                return false;
+            }
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0');
+            var yyyy = today.getFullYear();
+            today = yyyy + '-' + mm + '-' + dd;
+            if (check_in_date < today){
+                alert("Check in date has to now or in the future!");
+                return false;
+            }
+            var capacity_room = bed*bed +1;
+            var capacity = parseInt(adult) + parseInt(child);
+            if (capacity > capacity_room){
+                alert("Number of people exceed room's limit. Please upgrade the number of beds!");
+                return false;
+            }
         }
     </script>
     <link rel="stylesheet" href="{{url_for('static',filename='font-awesome-4.7.0/css/font-awesome.min.css')}}">                <!-- Font Awesome -->
@@ -124,7 +163,6 @@
                                                 <option type="number" value="7">7</option>
                                                 <option type="number" value="8">8</option>
                                                 <option type="number" value="9">9</option>
-                                                <option type="number" value="10">10</option>
                                             </select>
                                             <i class="fa fa-2x fa-user tm-form-element-icon"></i>
                                         </div>
@@ -141,16 +179,15 @@
                                                 <option type="number" value="7">7</option>
                                                 <option type="number" value="8">8</option>
                                                 <option type="number" value="9">9</option>
-                                                <option type="number" value="10">10</option>
                                             </select>
                                             <i class="fa fa-user tm-form-element-icon tm-form-element-icon-small"></i>
                                         </div>
                                         <div class="form-group tm-form-element tm-form-element-2">
-                                            <select name="room" class="form-control tm-select" id="bed">
+                                            <select name="bed" class="form-control tm-select" id="bed">
                                                 <option value="">Bed</option>
-                                                <option value="1">1</option>
-                                                <option value="2">2</option>
-                                                <option value="3">3</option>
+                                                <option type="number" value="1">1</option>
+                                                <option type="number" value="2">2</option>
+                                                <option type="number" value="3">3</option>
                                             </select>
                                             <i class="fa fa-2x fa-bed tm-form-element-icon"></i>
                                         </div>
