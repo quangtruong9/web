@@ -26,6 +26,7 @@ def index():
     if request.method =='POST':
         email = request.form.get("email")
         password = request.form.get("password")
+        password = sha256_crypt.encrypt(password)
         firstname = request.form.get("fname")
         lastname = request.form.get("lname")
         phone_number = request.form.get("pnumber")
@@ -46,9 +47,8 @@ def main():
     if request.method =='POST':
         email = request.form.get("signin_email")
         password = request.form.get("signin_pass")
-        emails = db.execute("SELECT email , password , firstname FROM customers WHERE email= :email AND password = :password",
-            {"email":email,"password":password}).fetchone()
-        if emails != None:
+        emails = db.execute("SELECT email , password , firstname FROM customers WHERE email= :email",{"email":email}).fetchone()
+        if emails != None and sha256_crypt.verify(password,emails.password):
             return render_template("main.html",customer = emails)
         else:
             return render_template("index.html")
@@ -57,9 +57,8 @@ def main():
 def login():
     email = request.form.get("email")
     password = request.form.get("password")
-    emails = db.execute("SELECT email , password FROM customers WHERE email= :email AND password = :password",
-            {"email":email,"password":password}).fetchone()
-    if emails != None:
+    emails = db.execute("SELECT email , password FROM customers WHERE email= :email ",{"email":email}).fetchone()
+    if emails != None and sha256_crypt.verify(password,emails.password):
         return jsonify({"success":True})
     else:
         return jsonify({"success":False})

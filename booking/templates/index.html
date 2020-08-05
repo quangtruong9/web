@@ -11,31 +11,6 @@
 
 -->
     <!-- load stylesheets -->
-    <script>
-        function verify(){
-            const request = new XMLHttpRequest();
-            const email = document.querySelector('#exampleDropdownFormEmail1').value;
-            const password = document.querySelector('#exampleDropdownFormPassword1').value;
-            request.open('POST','/login');
-            request.onload = () => {
-                const data = JSON.parse(request.responseText);
-                if (data.success===false){
-                    alert("Wrong Emai or Password. Try again!");
-                    return false;
-                }
-                else{
-                    return true;
-                }
-
-            };
-            const data = new FormData();
-            data.append('email',email);
-            data.append('password',password);
-
-            request.send(data);
-            
-        }
-    </script>  
     <link rel="stylesheet" href="{{url_for('static',filename='font-awesome-4.7.0/css/font-awesome.min.css')}}">                <!-- Font Awesome -->
     <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}">                                      <!-- Bootstrap style -->
     <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='slick/slick.css')}}"/>
